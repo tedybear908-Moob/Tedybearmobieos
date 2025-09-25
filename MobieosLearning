@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Teka-Teki Silang Interaktif</title>
+<meta name="generator" content="EclipseCrossword">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+    body, h1, h2, h3, h4, h5, h6 {
+        font-family: "Segoe UI", "Franklin Gothic Medium", "Arial", sans-serif;
+        text-align: center;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        color: #5d6a86;
+    }
+    body {
+        cursor: default;
+        font-size: small;
+        background-color: #f0f2f5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1em;
+    }
+    .main-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1em;
+    }
+    #data-pengguna {
+        background-color: #fff;
+        padding: 2em;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        width: 300px;
+    }
+    #data-pengguna h3 {
+        margin-top: 0;
+    }
+    #data-pengguna input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .ecw-answerbox {
+        color: black;
+        background-color: #FFFAF0;
+        border: 1px solid #808080;
+        display: block;
+        padding: .75em;
+        width: 240pt;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    .ecw-box {
+        border-style: solid;
+        border-width: 1pt;
+        cursor: pointer;
+        font-size: .12in;
+        font-weight: bold;
+        height: .18in;
+        overflow: hidden;
+        text-align: center;
+        width: .18in;
+    }
+    .ecw-boxcheated_sel { background-color: #FFF1D7; border-color: #C00000; color: #2080D0; }
+    .ecw-boxcheated_unsel { background-color: #ffffff; border-color: #606060; color: #2080D0; }
+    .ecw-boxerror_sel { background-color: #FFF1D7; border-color: #C00000; color: #BF0000; }
+    .ecw-boxerror_unsel { background-color: #FFF0F0; border-color: #606060; color: #BF0000; }
+    .ecw-boxnormal_sel { background-color: #FFF1D7; border-color: #C00000; color: #000000; }
+    .ecw-boxnormal_unsel { background-color: #ffffff; border-color: #606060; color: #000000; }
+    .ecw-button, .custom-button {
+        width: auto;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .custom-button {
+        background-color: #25D366;
+        color: white;
+        margin-top: 1em;
+    }
+    .custom-button:hover {
+        background-color: #128C7E;
+    }
+    .ecw-cluebox {
+        border-bottom-width: 1px;
+        border-color: #c0c0c0;
+        border-left-width: 0px;
+        border-right-width: 0px;
+        border-style: solid;
+        border-top-width: 1px;
+        margin-top: 1em;
+        padding: .5em 0;
+        text-align: left;
+    }
+    .ecw-crosswordarea {
+        background-color: #D0D8E0;
+        border: 2px solid #808080;
+        padding: .5em;
+        font-family: "Segoe UI", "Verdana", "Arial", sans-serif;
+        font-size: small;
+    }
+    .ecw-copyright {
+        margin-bottom: 1em;
+        font-size: x-small;
+    }
+    .ecw-input {
+        font-family: "Segoe UI", "Verdana", "Arial", sans-serif;
+    }
+    .ecw-wordlabel {
+        text-transform: uppercase;
+        margin: 0;
+        text-align: left;
+    }
+    .ecw-wordinfo {
+        font-size: 8pt;
+        color: #808080;
+        text-align: left;
+    }
+    .ecw-worderror {
+        color: #c00000;
+        font-weight: bold;
+        display: none;
+        margin-top: 1em;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+
+<h1>Teka-Teki Silang PPKn</h1>
+<h3 style="margin-top: -1em;">Isilah TTS berikut dengan benar!</h3>
+
+<div id="data-pengguna">
+    <h3>Masukkan Data Diri</h3>
+    <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required="">
+    <input type="text" id="kelas" placeholder="Masukkan Kelas" required="">
+    <button id="mulai-button" class="ecw-input ecw-button" style="width:100%; font-weight: bold; background-color: #5d6a86; color: white;">Mulai Mengerjakan</button>
+</div>
+
+<div id="puzzle-container" style="display: none;">
+    <div class="main-container">
+        <div class="ecw-crosswordarea">
+            <div id="waitmessage" class="ecw-answerbox" style="display: none;">Please wait while the crossword is loaded...</div>
+            <script type="text/javascript">
+                CrosswordWidth = 27;
+                CrosswordHeight = 24;
+                Words = 20;
+                WordLength = new Array(10, 5, 15, 3, 9, 9, 11, 18, 4, 12, 13, 11, 8, 8, 10, 9, 7, 6, 10, 8);
+                // Array 'Word' tidak lagi digunakan untuk fungsi bantuan, tapi tetap ada untuk referensi internal.
+                Word = new Array("MUSYAWARAH", "HUKUM", "BAHASAINDONESIA", "MPR", "PANCASILA", "TOLERANSI", "PATRIOTISME", "BHINNEKATUNGGALIKA", "NKRI", "NASIONALISME", "INDONESIARAYA", "KEMANUSIAAN", "KEADILAN", "KESATUAN", "PENGAMALAN", "DEMOKRASI", "RUMUSAN", "UUDNRI", "MENGHARGAI", "IDEOLOGI");
+                Clue = new Array("Proses pengambilan keputusan bersama yang menjadi ciri khas sila keempat Pancasila.",
+                "Pasal 1 ayat 1 UUD NRI Tahun 1945 menyatakan bahwa Indonesia adalah negara",
+                "Bahasa persatuan bangsa Indonesia.",
+                "Lembaga negara yang berwenang mengubah dan menetapkan UUD. (Singkatan)",
+                "Dasar negara Indonesia",
+                "Sikap saling menghormati dan menghargai adanya perbedaan keyakinan, suku, dan budaya.",
+                "Sikap rela berkorban demi kepentingan bangsa dan negara.",
+                "Semboyan bangsa Indonesia yang artinya \"berbeda-beda tetapi tetap satu\".",
+                "Bentuk negara Indonesia. (Singkatan)",
+                "Semangat cinta tanah air dan mendahulukan kepentingan bangsa di atas kepentingan pribadi.",
+                "Lagu kebangsaan Indonesia.",
+                "Sila kedua Pancasila menekankan nilai",
+                "Sila kelima Pancasila menekankan terwujudnya ... sosial bagi seluruh rakyat Indonesia.",
+                "NKRI adalah negara ... yang berbentuk republik.",
+                "Perilaku atau tindakan yang sesuai dengan nilai-nilai Pancasila.",
+                "Sila keempat Pancasila menekankan nilai",
+                "PEMBUKAAN UUD NRI TAHUN 1945 ALINEA KEEMPAT MEMUAT ... PANCASILA.",
+                "Hukum dasar tertulis negara Republik Indonesia. (Singkatan)",
+                "Bhinneka Tunggal Ika mengajarkan sikap saling ... antar sesama.",
+                "Pancasila sebagai ... bangsa.");
+                AnswerHash = new Array(59586, 51289, 60098, 12985, 92050, 23890, 33801, 17786, 97470, 76974, 335, 33647, 46543, 80118, 54375, 7803, 65555, 86528, 91455, 91285);
+                WordX = new Array(8, 2, 0, 17, 7, 6, 10, 2, 3, 13, 14, 10, 14, 4, 11, 17, 19, 6, 26, 17);
+                WordY = new Array(2, 4, 6, 7, 9, 11, 13, 16, 18, 19, 21, 23, 0, 4, 5, 5, 11, 13, 13, 16);
+                LastHorizontalWord = 11;
+                OnlyCheckOnce = false;
+            </script>
+            <script type="text/javascript">
+                // EclipseCrossword (C) Copyright 2000-2013 Green Eclipse.
+                var BadChars="`~!@^*()_={[}]\\|:;\"',<>/?";var TableAcrossWord,TableDownWord;var CurrentWord,PrevWordHorizontal,x,y,i,j;var CrosswordFinished,Initialized;if(document.getElementById("waitmessage")!=null){document.getElementById("waitmessage").innerHTML="Please wait while the crossword is loaded...";CurrentWord=-1;PrevWordHorizontal=false;TableAcrossWord=new Array(CrosswordWidth);for(var x=0;x<CrosswordWidth;x++)TableAcrossWord[x]=new Array(CrosswordHeight);TableDownWord=new Array(CrosswordWidth);for(var x=0;x<CrosswordWidth;x++)TableDownWord[x]=new Array(CrosswordHeight);for(var y=0;y<CrosswordHeight;y++)for(var x=0;x<CrosswordWidth;x++){TableAcrossWord[x][y]=-1;TableDownWord[x][y]=-1;}
+                for(var i=0;i<=LastHorizontalWord;i++){x=WordX[i];y=WordY[i];for(var j=0;j<WordLength[i];j++){TableAcrossWord[x+j][y]=i;}}
+                for(var i=LastHorizontalWord+1;i<Words;i++){x=WordX[i];y=WordY[i];for(var j=0;j<WordLength[i];j++){TableDownWord[x][y+j]=i;}}
+                document.writeln("<table id=\"crossword\" cellpadding=\"0\" cellspacing=\"0\" style=\"display: none; border-collapse: collapse;\">");for(var y=0;y<CrosswordHeight;y++){document.writeln("<tr>");for(var x=0;x<CrosswordWidth;x++){if(TableAcrossWord[x][y]>=0||TableDownWord[x][y]>=0)
+                document.write("<td id=\"c"+PadNumber(x)+PadNumber(y)+"\" class=\"ecw-box ecw-boxnormal_unsel\" onclick=\"SelectThisWord(event);\">&nbsp;</td>");else
+                document.write("<td><\/td>");}
+                document.writeln("<\/tr>");}
+                document.writeln("<\/table>");Initialized=true;document.getElementById("waitmessage").style.display="none";document.getElementById("crossword").style.display="block";}
+                function WordEntryKeyPress(event){if(CrosswordFinished)return;if(CurrentWord>=0&&event.keyCode==13)OKClick();}
+                function BeginCrossword(){if(Initialized){document.getElementById("welcomemessage").style.display="";document.getElementById("checkbutton").style.display="";}}
+                function ContainsBadChars(theirWord){for(var i=0;i<theirWord.length;i++)
+                if(BadChars.indexOf(theirWord.charAt(i))>=0)return true;return false;}
+                function PadNumber(number){if(number<10)
+                return"00"+number;else if(number<100)
+                return"0"+number;else
+                return""+number;}
+                function CellAt(x,y){return document.getElementById("c"+PadNumber(x)+PadNumber(y));}
+                function DeselectCurrentWord(){if(CurrentWord<0)return;var x,y,i;document.getElementById("answerbox").style.display="none";ChangeCurrentWordSelectedStyle(false);CurrentWord=-1;}
+                function ChangeWordStyle(WordNumber,NewStyle){if(WordNumber<0)return;var x=WordX[WordNumber];var y=WordY[WordNumber];if(WordNumber<=LastHorizontalWord)
+                for(i=0;i<WordLength[WordNumber];i++)
+                CellAt(x+i,y).className=NewStyle;else
+                for(i=0;i<WordLength[WordNumber];i++)
+                CellAt(x,y+i).className=NewStyle;}
+                function ChangeCurrentWordSelectedStyle(IsSelected){if(CurrentWord<0)return;var x=WordX[CurrentWord];var y=WordY[CurrentWord];if(CurrentWord<=LastHorizontalWord)
+                for(i=0;i<WordLength[CurrentWord];i++)
+                CellAt(x+i,y).className=CellAt(x+i,y).className.replace(IsSelected?"_unsel":"_sel",IsSelected?"_sel":"_unsel");else
+                for(i=0;i<WordLength[CurrentWord];i++)
+                CellAt(x,y+i).className=CellAt(x,y+i).className.replace(IsSelected?"_unsel":"_sel",IsSelected?"_sel":"_unsel");}
+                function SelectThisWord(event){if(CrosswordFinished)return;var x,y,i,TheirWord,TableCell;document.getElementById("welcomemessage").style.display="none";if(CurrentWord>=0)OKClick();DeselectCurrentWord();var target=(event.srcElement?event.srcElement:event.target);x=parseInt(target.id.substring(1,4),10);y=parseInt(target.id.substring(4,7),10);if(TableAcrossWord[x][y]>=0&&TableDownWord[x][y]>=0)
+                CurrentWord=PrevWordHorizontal?TableDownWord[x][y]:TableAcrossWord[x][y];else if(TableAcrossWord[x][y]>=0)
+                CurrentWord=TableAcrossWord[x][y];else if(TableDownWord[x][y]>=0)
+                CurrentWord=TableDownWord[x][y];PrevWordHorizontal=(CurrentWord<=LastHorizontalWord);ChangeCurrentWordSelectedStyle(true);x=WordX[CurrentWord];y=WordY[CurrentWord];TheirWord="";var TheirWordLength=0;for(i=0;i<WordLength[CurrentWord];i++){if(CurrentWord<=LastHorizontalWord)
+                TableCell=CellAt(x+i,y);else
+                TableCell=CellAt(x,y+i);if(TableCell.innerHTML!=null&&TableCell.innerHTML.length>0&&TableCell.innerHTML!=" "&&TableCell.innerHTML.toLowerCase()!="&nbsp;"){TheirWord+=TableCell.innerHTML.toUpperCase();TheirWordLength++;}
+                else{TheirWord+="&bull;";}}
+                document.getElementById("wordlabel").innerHTML=TheirWord;document.getElementById("wordinfo").innerHTML=((CurrentWord<=LastHorizontalWord)?"Mendatar, ":"Menurun, ")+WordLength[CurrentWord]+" huruf.";document.getElementById("wordclue").innerHTML=Clue[CurrentWord];document.getElementById("worderror").style.display="none";document.getElementById("cheatbutton").style.display="none"; /* Tombol bantuan disembunyikan */ if(TheirWordLength==WordLength[CurrentWord])
+                document.getElementById("wordentry").value=TheirWord.replace(/&AMP;/g,'&');else
+                document.getElementById("wordentry").value="";document.getElementById("answerbox").style.display="block";try{document.getElementById("wordentry").focus();document.getElementById("wordentry").select();}
+                catch(e){}}
+                function OKClick(){var TheirWord,x,y,i,TableCell;if(CrosswordFinished)return;if(document.getElementById("okbutton").disabled)return;TheirWord=document.getElementById("wordentry").value.toUpperCase();if(TheirWord.length==0){DeselectCurrentWord();return;}
+                if(ContainsBadChars(TheirWord)){document.getElementById("worderror").innerHTML="Kata yang Anda ketik mengandung karakter yang tidak valid. Harap ketik huruf saja.";document.getElementById("worderror").style.display="block";return;}
+                if(TheirWord.length<WordLength[CurrentWord]){document.getElementById("worderror").innerHTML="Anda mengetik huruf terlalu sedikit. Kata ini memiliki "+WordLength[CurrentWord]+" huruf.";document.getElementById("worderror").style.display="block";return;}
+                if(TheirWord.length>WordLength[CurrentWord]){document.getElementById("worderror").innerHTML="Anda mengetik huruf terlalu banyak. Kata ini memiliki "+WordLength[CurrentWord]+" huruf.";document.getElementById("worderror").style.display="block";return;}
+                x=WordX[CurrentWord];y=WordY[CurrentWord];for(i=0;i<TheirWord.length;i++){TableCell=CellAt(x+(CurrentWord<=LastHorizontalWord?i:0),y+(CurrentWord>LastHorizontalWord?i:0));TableCell.innerHTML=TheirWord.substring(i,i+1);}
+                DeselectCurrentWord();}
+                function CheckClick(){var i,j,x,y,UserEntry,ErrorsFound=0,EmptyFound=0,CorrectFound=0,TableCell;if(CrosswordFinished)return;DeselectCurrentWord();for(y=0;y<CrosswordHeight;y++)
+                for(x=0;x<CrosswordWidth;x++)
+                if(TableAcrossWord[x][y]>=0||TableDownWord[x][y]>=0){TableCell=CellAt(x,y);if(TableCell.className=="ecw-box ecw-boxerror_unsel")TableCell.className="ecw-box ecw-boxnormal_unsel";}
+                for(i=0;i<Words;i++){UserEntry="";for(j=0;j<WordLength[i];j++){if(i<=LastHorizontalWord)
+                TableCell=CellAt(WordX[i]+j,WordY[i]);else
+                TableCell=CellAt(WordX[i],WordY[i]+j);if(TableCell.innerHTML.length>0&&TableCell.innerHTML.toLowerCase()!="&nbsp;"){UserEntry+=TableCell.innerHTML.toUpperCase();}
+                else{UserEntry="";EmptyFound++;break;}}
+                UserEntry=UserEntry.replace(/&AMP;/g,'&');if(HashWord(UserEntry)!=AnswerHash[i]&&UserEntry.length>0){ErrorsFound++;ChangeWordStyle(i,"ecw-box ecw-boxerror_unsel");} else if (UserEntry.length>0) {CorrectFound++;}}
+                if(ErrorsFound>0&&EmptyFound>0)
+                document.getElementById("welcomemessage").innerHTML=ErrorsFound+(ErrorsFound>1?" kesalahan":" kesalahan")+" dan "+EmptyFound+(EmptyFound>1?" kata belum terisi":" kata belum terisi")+" ditemukan.";else if(ErrorsFound>0)
+                document.getElementById("welcomemessage").innerHTML=ErrorsFound+(ErrorsFound>1?" kesalahan ditemukan":" kesalahan ditemukan")+".";else if(EmptyFound>0)
+                document.getElementById("welcomemessage").innerHTML="Tidak ada kesalahan, namun "+EmptyFound+(EmptyFound>1?" kata belum terisi":" kata belum terisi")+".";if(ErrorsFound+EmptyFound>0){document.getElementById("welcomemessage").style.display="";return;}
+                CrosswordFinished=true;document.getElementById("checkbutton").style.display="none";document.getElementById("congratulations").style.display="block";document.getElementById("welcomemessage").style.display="none"; return CorrectFound;}
+                /* Fungsi CheatClick() tidak lagi digunakan
+                function CheatClick(){if(CrosswordFinished)return;var OldWord=CurrentWord;document.getElementById("wordentry").value=Word[CurrentWord];OKClick();ChangeWordStyle(OldWord,"ecw-box ecw-boxcheated_unsel");}
+                */
+                function HashWord(Word){var x=(Word.charCodeAt(0)*719)%1138;var Hash=837;var i;for(i=1;i<=Word.length;i++)
+                Hash=(Hash*i+5+(Word.charCodeAt(i-1)-64)*x)%98503;return Hash;}
+            </script><table id="crossword" cellpadding="0" cellspacing="0" style="display: block; border-collapse: collapse;">
+<tbody><tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c014000" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c014001" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c008002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c009002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c010002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c016002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c017002" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c014003" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td id="c002004" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c003004" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c004004" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c005004" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c006004" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c014004" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td id="c004005" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c011005" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c014005" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c017005" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td id="c000006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c001006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c002006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c003006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c004006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c005006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c006006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c007006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c008006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c009006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c010006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c017006" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td id="c004007" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c011007" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c014007" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c017007" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c018007" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c019007" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td id="c004008" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c011008" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td id="c017008" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td id="c004009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c007009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c008009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c009009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c010009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td id="c017009" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td id="c004010" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c011010" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td id="c017010" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td id="c004011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td id="c006011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c007011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c008011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c009011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c010011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td id="c017011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td id="c019011" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c011012" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td id="c017012" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td id="c019012" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td id="c006013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td id="c010013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c016013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c017013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c018013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c019013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c020013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td id="c026013" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td id="c006014" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td id="c011014" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c019014" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026014" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td id="c006015" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c019015" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026015" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td id="c002016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c003016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c004016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c005016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c006016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c007016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c008016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c009016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c010016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c016016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c017016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c018016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c019016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026016" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td id="c006017" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c017017" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td id="c019017" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026017" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td id="c003018" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c004018" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c005018" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c006018" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c017018" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026018" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c013019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c016019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c017019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c018019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c019019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c020019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c021019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c022019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c023019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c024019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td id="c026019" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c017020" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026020" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c014021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c016021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c017021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c018021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c019021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c020021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c021021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c022021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c023021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c024021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c025021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c026021" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c017022" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c026022" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td></tr>
+<tr>
+<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td id="c010023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c011023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c012023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c013023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c014023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c015023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c016023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c017023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c018023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c019023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td id="c020023" class="ecw-box ecw-boxnormal_unsel" onclick="SelectThisWord(event);">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+
+        </div>
+        <div valign="top" style="padding-left: 1em;">
+            <div class="ecw-copyright">
+                <a href="http://www.eclipsecrossword.com/" onclick="this.target='_blank'" style="font-weight: bold;">EclipseCrossword</a> © 2000-2013
+            </div>
+            <div id="welcomemessage" class="ecw-answerbox" style="display:none;">
+                <h3>Selamat Datang!</h3>
+                <p>Klik sebuah kata pada puzzle untuk memulai.</p>
+            </div>
+            <div id="answerbox" class="ecw-answerbox" style="display:none;">
+                <h3 id="wordlabel" class="ecw-wordlabel"> &nbsp;</h3>
+                <div id="wordinfo" class="ecw-wordinfo"></div>
+                <div id="wordclue" class="ecw-cluebox"></div>
+                <div style="margin-top: 1em;">
+                    <input class="ecw-input" id="wordentry" type="text" size="24" style="font-weight: bold; text-transform:uppercase;" onkeypress="WordEntryKeyPress(event)" onchange="WordEntryKeyPress(event)">
+                </div>
+                <div id="worderror" class="ecw-worderror"></div>
+                <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:1em;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button id="cheatbutton" type="button" class="ecw-input ecw-button" style="display: none;">Bantuan</button>
+                            </td>
+                            <td align="right">
+                                <button id="okbutton" type="button" class="ecw-input ecw-button" onclick="OKClick();" style="font-weight: bold;">OK</button> &nbsp;
+                                <button id="cancelbutton" type="button" class="ecw-input ecw-button" onclick="DeselectCurrentWord();">Batal</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="congratulations" class="ecw-answerbox" style="display:none;">
+                <h3>Selamat!</h3>
+                <p>Anda telah berhasil menyelesaikan teka-teki silang ini.</p>
+                </div>
+        </div>
+    </div>
+    <div style="margin-top: 1em;">
+        <button id="checkbutton" type="button" onclick="handleCheckClick();" style="display: none;" class="ecw-input ecw-button">Periksa Jawaban</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // --- BAGIAN YANG BISA ANDA SESUAIKAN ---
+    const nomorWhatsapp = "6281234567890"; // GANTI DENGAN NOMOR WA TUJUAN (Format: 62...)
+    // ------------------------------------
+
+    let namaPengguna = "";
+    let kelasPengguna = "";
+    let skorAkhir = 0; // Variabel untuk menyimpan skor akhir
+
+    const tombolMulai = document.getElementById('mulai-button');
+    const formPengguna = document.getElementById('data-pengguna');
+    const containerPuzzle = document.getElementById('puzzle-container');
+
+    tombolMulai.addEventListener('click', function() {
+        const inputNama = document.getElementById('nama');
+        const inputKelas = document.getElementById('kelas');
+
+        if (inputNama.value.trim() === '' || inputKelas.value.trim() === '') {
+            alert('Harap isi Nama dan Kelas terlebih dahulu!');
+        } else {
+            namaPengguna = inputNama.value.trim();
+            kelasPengguna = inputKelas.value.trim();
+            formPengguna.style.display = 'none';
+            containerPuzzle.style.display = 'block';
+            BeginCrossword();
+        }
+    });
+    
+    // Fungsi baru untuk menangani klik pada tombol "Periksa Jawaban"
+    function handleCheckClick() {
+        // Jalankan fungsi pengecekan asli dan simpan jumlah jawaban benar
+        const jumlahBenar = window.CheckClick();
+        
+        // Jika puzzle selesai (CrosswordFinished menjadi true), hitung skor
+        if (CrosswordFinished) {
+            // Hitung skor (jumlah benar / total kata * 100)
+            skorAkhir = Math.round((jumlahBenar / Words) * 100);
+
+            const congratsBox = document.getElementById('congratulations');
+            
+            // Tampilkan skor di kotak selamat
+            congratsBox.innerHTML = `<h3>Selamat!</h3><p>Anda telah berhasil menyelesaikan teka-teki silang ini.</p><p><b>Skor Anda: ${skorAkhir}</b></p>`;
+            
+            // Cek apakah tombol sudah ada agar tidak duplikat
+            if (!document.getElementById('kirim-wa-button')) {
+                const tombolKirim = document.createElement('button');
+                tombolKirim.id = 'kirim-wa-button';
+                tombolKirim.className = 'custom-button';
+                tombolKirim.textContent = 'Kirim Hasil via WhatsApp';
+                tombolKirim.onclick = kirimJawaban;
+                
+                congratsBox.appendChild(tombolKirim);
+            }
+        }
+    }
+
+    function kirimJawaban() {
+        const pesanWa = `Halo, saya sudah selesai mengerjakan Teka-Teki Silang PPKn.\n\nNama: *${namaPengguna}*\nKelas: *${kelasPengguna}*\nNilai: *${skorAkhir}*\n\nTerima kasih.`;
+        
+        // Encode pesan untuk URL
+        const encodedPesan = encodeURIComponent(pesanWa);
+        
+        // Buat URL WhatsApp
+        const urlWa = `https://wa.me/${nomorWhatsapp}?text=${encodedPesan}`;
+        
+        // Buka di tab baru
+        window.open(urlWa, '_blank');
+    }
+</script>
+
+
+</body></html>
